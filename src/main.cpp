@@ -31,7 +31,7 @@
  *          are:
  *          ESC     Exit the program
  *          W       Toggle wireframe mode
- * @todo    Refactor code into modular handling with simple way for adding new
+ * @todo #2 Refactor code into modular handling with simple way for adding new
  *          inputs and actions.
  * @param   aWindow [in/out] Window for which to process input
  */
@@ -78,7 +78,7 @@ int main()
         });
 
     /**
-     * @todo    This currently only works when the program is invoked from
+     * @todo #3 This currently only works when the program is invoked from
      *          within it'sown directory. Some logic should be added to find
      *          the shaders independent of the current location in the
      *          filesystem.

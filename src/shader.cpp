@@ -72,14 +72,14 @@ Shader::Shader
     glCompileShader( vertexShaderId );
     if ( !ShaderCompiled( vertexShaderId ) )
     {
-        /// @todo: Errorhandling
+        /// @todo #4 Errorhandling
     }
     fragmentShaderId = glCreateShader( GL_FRAGMENT_SHADER );
     glShaderSource( fragmentShaderId, 1, &fragmentSourcePtr, nullptr );
     glCompileShader( fragmentShaderId );
     if ( !ShaderCompiled( fragmentShaderId ) )
     {
-        /// @todo: Errorhandling
+        /// @todo #4 Errorhandling
     }
 
     mProgramId = glCreateProgram();
@@ -88,7 +88,7 @@ Shader::Shader
     glLinkProgram( mProgramId );
     if ( !ShaderLinked( mProgramId ) )
     {
-        /// @todo: Errorhandling
+        /// @todo #4 Errorhandling
     }
 
     glDeleteShader( vertexShaderId );
@@ -181,7 +181,7 @@ void Shader::SetBooleanUniform
                      "This means that " << aName << " does not correspond "
                      "to an active uniform in this shader program or that the "
                      "specified name is reserved by OpenGL.";
-        /// @todo: Error handling?
+        /// @todo #4 Error handling?
     }
     else
     {
@@ -202,7 +202,7 @@ void Shader::SetIntegerUniform
                      "This means that " << aName << " does not correspond "
                      "to an active uniform in this shader program or that the "
                      "specified name is reserved by OpenGL.";
-        /// @todo: Error handling?
+        /// @todo #4 Error handling?
     }
     else
     {
@@ -223,7 +223,7 @@ void Shader::SetFloatUniform
                      "This means that " << aName << " does not correspond "
                      "to an active uniform in this shader program or that the "
                      "specified name is reserved by OpenGL.";
-        /// @todo: Error handling?
+        /// @todo #4 Error handling?
     }
     else
     {
@@ -247,7 +247,7 @@ void Shader::SetFloatUniform
                      "This means that " << aName << " does not correspond "
                      "to an active uniform in this shader program or that the "
                      "specified name is reserved by OpenGL." << std::endl;
-        /// @todo: Error handling?
+        /// @todo #4 Error handling?
     }
     else
     {

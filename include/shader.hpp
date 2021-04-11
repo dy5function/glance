@@ -87,7 +87,7 @@ public:
      * @note    This method performs a static_cast from float to the OpenGL
      *          typedef GLfloat before setting the provided value for the
      *          uniform.
-     * @todo    Refactor overloads into more elegant solution?
+     * @todo #1 Refactor overloads into more elegant solution?
      * @param   aName [in] Name of the floating-point uniform to set.
      * @param   aValue [in] Value to set for the floating-point uniform.
      */
