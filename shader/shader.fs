@@ -1,10 +1,14 @@
 #version 400 core
 
-uniform vec4 aColor;
+in vec3 color;
+in vec2 textureCoord;
 
-out vec4 aFragmentColor;
+out vec4 fragmentColor;
+
+uniform sampler2D textureSampler;
 
 void main()
 {
-    aFragmentColor = aColor;
+    fragmentColor = texture( textureSampler, textureCoord ) *
+                    vec4( color, 1.0 );
 }

@@ -22,6 +22,8 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
 
 #include "glance.hpp"
 
@@ -46,9 +48,9 @@ int main()
                     GLANCE_GLFW_CONTEXT_VERSION_MINOR );
     glfwWindowHint( GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE );
     glfwWindowHint( GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE );
-    constexpr int width = 800;
-    constexpr int height = 600;
-    GLFWwindow* window = glfwCreateWindow( width, height, "Glance",
+    constexpr int windowWidth = 800;
+    constexpr int windowHeight = 600;
+    GLFWwindow* window = glfwCreateWindow( windowWidth, windowHeight, "Glance",
                                            nullptr, nullptr );
 
     if ( !window )
@@ -68,7 +70,7 @@ int main()
     }
     std::cerr << "INFO: Opengl " << glGetString( GL_VERSION ) << std::endl;
 
-    glViewport( 0, 0, width, height );
+    glViewport( 0, 0, windowWidth, windowHeight );
     glfwSetFramebufferSizeCallback
         (
         window,
@@ -85,13 +87,50 @@ int main()
      */
     Glance::Shader shader = Glance::Shader( "shader.vs", "shader.fs" );
 
-    // Triangle
+    // Texture
+    GLuint texture;
+    glGenTextures( 1, &texture );
+    glBindTexture( GL_TEXTURE_2D, texture );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+
+    int textureWidth, textureHeight, textureChannels;
+    stbi_uc* textureData = stbi_load( "container.jpg", &textureWidth,
+                                      &textureHeight, &textureChannels,
+                                      /* magic number? */ 0 );
+    if ( textureData )
+    {
+        glTexImage2D( /* target         = */ GL_TEXTURE_2D,
+                      /* level          = */ 0,
+                      /* internalFormat = */ GL_RGB,
+                      /* width          = */ textureWidth,
+                      /* height         = */ textureHeight,
+                      /* border         = */ 0,
+                      /* format         = */ GL_RGB,
+                      /* type           = */ GL_UNSIGNED_BYTE,
+                      /* data           = */ textureData );
+        glGenerateMipmap( GL_TEXTURE_2D );
+    }
+    else
+    {
+        std::cerr << "ERROR: Could not load texture." << std::endl;
+    }
+    stbi_image_free( textureData );
+
+    // Geometry
     float vertices[] = {
-        -0.5f, -0.5f, .0f,      // low left
-         0.5f, -0.5f, .0f,      // low right
-         0.0f,  0.5f, .0f       // top
+        /* positions */         /* colors */        /* texture coords */
+         0.5f,  0.5f, 0.0f,     1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
+         0.5f, -0.5f, 0.0f,     0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
+        -0.5f, -0.5f, 0.0f,     0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
+        -0.5f,  0.5f, 0.0f,     1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left
     };
-    GLuint indices[] = { 0, 1, 2 };
+    GLuint indices[] = {
+        0, 1, 2,
+        2, 3, 0
+    };
 
     GLuint vertexBufferObject;
     glGenBuffers( 1, &vertexBufferObject );
@@ -109,19 +148,27 @@ int main()
     glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, elementBufferObject );
     glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof( indices ), indices,
                   GL_STATIC_DRAW );
-    glVertexAttribPointer
-        (
-        /* index        = */ 0,
-        /* size         = */ 3,
-        /* type         = */ GL_FLOAT,
-        /* normalized   = */ GL_FALSE,
-        /* stride       = */ 0,
-        /* pointer      = */ (const void*)0
-        );
+    glVertexAttribPointer( /* index         = */ 0,
+                           /* size          = */ 3,
+                           /* type          = */ GL_FLOAT,
+                           /* normalized    = */ GL_FALSE,
+                           /* stride        = */ 8 * sizeof( float ),
+                           /* offset        = */ (const void*)0 );
     glEnableVertexAttribArray( 0 );
-
-    // Color of the triangle is updated over time
-    float time, red, green, blue;
+    glVertexAttribPointer( /* index         = */ 1,
+                           /* size          = */ 3,
+                           /* type          = */ GL_FLOAT,
+                           /* normalized    = */ GL_FALSE,
+                           /* stride        = */ 8 * sizeof( float ),
+                           /* offset        = */ (const void*)( 3 * sizeof( float ) ) );
+    glEnableVertexAttribArray( 1 );
+    glVertexAttribPointer( /* index         = */ 2,
+                           /* size          = */ 2,
+                           /* type          = */ GL_FLOAT,
+                           /* normalized    = */ GL_FALSE,
+                           /* stride        = */ 8 * sizeof( float ),
+                           /* offset        = */ (const void*)( 6 * sizeof( float ) ) );
+    glEnableVertexAttribArray( 2 );
 
     while ( !glfwWindowShouldClose( window ) )
     {
@@ -131,20 +178,14 @@ int main()
         glClearColor( .2f, .3f, .3f, 1.f );
         glClear( GL_COLOR_BUFFER_BIT );
 
-        // Update triangle color
-        time    = glfwGetTime();
-        red     = ( .5f * std::sin( time ) ) + .5f;
-        green   = ( .5f * std::sin( time + .667f * M_PI ) ) + .5f;
-        blue    = ( .5f * std::sin( time - .667f * M_PI ) ) + .5f;
-
         shader.Use();
+        glBindTexture( GL_TEXTURE_2D, texture );
         glBindVertexArray( vertexArrayObject );
-        shader.SetFloatUniform( "aColor", red, green, blue, 1.f );
 
         glDrawElements
             (
             /* mode     = */ GL_TRIANGLES,
-            /* count    = */ 3,
+            /* count    = */ 6,
             /* type     = */ GL_UNSIGNED_INT,
             /* indices  = */ (const void*)0
             );

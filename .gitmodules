@@ -5,3 +5,6 @@
 	path = submodules/glad
 	url = https://github.com/Dav1dde/glad.git
 	branch = c
+[submodule "submodules/stb"]
+	path = submodules/stb
+	url = https://github.com/nothings/stb.git

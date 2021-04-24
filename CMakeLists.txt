@@ -55,12 +55,14 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -std=c++11")
 
 include_directories(include/
                     submodules/glad/include/
-                    submodules/glfw/include/)
+                    submodules/glfw/include/
+                    submodules/stb/)
 
 file(GLOB PROJECT_HEADERS include/*.hpp)
 file(GLOB PROJECT_SOURCES src/*.cpp)
 file(GLOB PROJECT_SHADERS shader/*.vs
                           shader/*.fs)
+file(GLOB PROJECT_TEXTURES texture/*.jpg)
 file(GLOB PROJECT_CONFIGS .gitignore
                           .gitmodules
                           CMakeLists.txt
@@ -73,6 +75,7 @@ add_definitions(-DGLFW_INCLUDE_NONE)
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCES}
                                ${PROJECT_HEADERS}
                                ${PROJECT_SHADERS}
+                               ${PROJECT_TEXTURES}
                                ${PROJECT_CONFIGS}
                                ${GLAD_SOURCES})
 target_link_libraries(${PROJECT_NAME} glfw
@@ -84,3 +87,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/shader $<TARGET_FILE_DIR:${PROJECT_NAME}>
                    DEPENDS ${PROJECT_SHADERS})
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/texture $<TARGET_FILE_DIR:${PROJECT_NAME}>
+                   DEPENDS ${PROJECT_TEXTURES})
+
