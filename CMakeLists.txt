@@ -42,52 +42,56 @@
 ###############################################################################
 
 cmake_minimum_required(VERSION 3.9.0)
-project(Glance VERSION 0.1
+project(
+        glance VERSION 0.1
         DESCRIPTION "OpenGL boilerplate project"
-        LANGUAGES C CXX)
+        LANGUAGES C CXX
+)
 
 option(GLFW_BUILD_DOCS OFF)
 option(GLFW_BUILD_EXAMPLES OFF)
 option(GLFW_BUILD_TEST OFF)
 add_subdirectory(submodules/glfw)
+add_subdirectory(submodules/googletest)
+add_subdirectory(test)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -std=c++11")
 
-include_directories(include/
-                    submodules/glad/include/
-                    submodules/glfw/include/
-                    submodules/stb/)
-
 file(GLOB PROJECT_HEADERS include/*.hpp)
 file(GLOB PROJECT_SOURCES src/*.cpp)
-file(GLOB PROJECT_SHADERS shader/*.vs
-                          shader/*.fs)
-file(GLOB PROJECT_TEXTURES texture/*.jpg)
-file(GLOB PROJECT_CONFIGS .gitignore
-                          .gitmodules
-                          CMakeLists.txt
-                          COPYING
-                          Doxyfile
-                          README.md)
+file(
+        GLOB PROJECT_CONFIGS .gitignore
+        .gitmodules
+        CMakeLists.txt
+        COPYING
+        Doxyfile
+        README.md
+)
 file(GLOB GLAD_SOURCES submodules/glad/src/glad.c)
 
 add_definitions(-DGLFW_INCLUDE_NONE)
-add_executable(${PROJECT_NAME} ${PROJECT_SOURCES}
-                               ${PROJECT_HEADERS}
-                               ${PROJECT_SHADERS}
-                               ${PROJECT_TEXTURES}
-                               ${PROJECT_CONFIGS}
-                               ${GLAD_SOURCES})
-target_link_libraries(${PROJECT_NAME} glfw
-                                      ${GLFW_LIBRARIES}
-                                      ${GLAD_LIBRARIES})
-set_target_properties(${PROJECT_NAME} PROPERTIES
-                      RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${PROJECT_NAME})
+add_library(
+        glance
+        ${PROJECT_SOURCES}
+        ${PROJECT_HEADERS}
+        ${PROJECT_CONFIGS}
+        ${GLAD_SOURCES}
+)
+target_link_libraries(
+        glance
+        glfw
+        ${GLFW_LIBRARIES}
+        ${GLAD_LIBRARIES}
+)
+target_include_directories(
+        glance PUBLIC
+        include/
+        submodules/glad/include/
+        submodules/glfw/include/
+        submodules/stb/
+)
 
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-                   COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/shader $<TARGET_FILE_DIR:${PROJECT_NAME}>
-                   DEPENDS ${PROJECT_SHADERS})
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-                   COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/texture $<TARGET_FILE_DIR:${PROJECT_NAME}>
-                   DEPENDS ${PROJECT_TEXTURES})
+# set_target_properties(glance PROPERTIES
+#                       RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/glance)
 
+add_subdirectory(example)

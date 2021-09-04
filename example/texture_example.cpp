@@ -71,21 +71,20 @@ int main()
     std::cerr << "INFO: Opengl " << glGetString( GL_VERSION ) << std::endl;
 
     glViewport( 0, 0, windowWidth, windowHeight );
-    glfwSetFramebufferSizeCallback
-        (
-        window,
-        [] ( GLFWwindow*, int aWidth, int aHeight )
-        {
-            glViewport( 0, 0, aWidth, aHeight );
-        });
+    glfwSetFramebufferSizeCallback( window,
+                                    [] ( GLFWwindow*, int aWidth, int aHeight )
+                                    {
+                                        glViewport( 0, 0, aWidth, aHeight );
+                                    } );
 
     /**
      * @todo #3 This currently only works when the program is invoked from
-     *          within it'sown directory. Some logic should be added to find
+     *          within it's own directory. Some logic should be added to find
      *          the shaders independent of the current location in the
      *          filesystem.
      */
-    Glance::Shader shader = Glance::Shader( "shader.vs", "shader.fs" );
+    Glance::Shader shader = Glance::Shader( "texture_example_shader.vs",
+                                            "texture_example_shader.fs" );
 
     // Texture
     GLuint texture;
