@@ -21,6 +21,7 @@
 #define GLANCE_SHADER_HPP
 
 #include <string>
+#include <exception>
 
 #include <glad/glad.h>
 
@@ -34,6 +35,7 @@ public:
      * @brief   Constructor
      * @details The constructor reads in the shader source file and compiles
      *          the shader program from it.
+     * @throw   Throws ShaderException in case of unrecoverable error.
      * @param   aVertexPath [in] Path to the vertex shader source
      * @param   aFragmentPath [in] Path to the fragment shader source
      */
@@ -136,6 +138,31 @@ private:
         (
         GLuint aProgramId
         );
+};
+
+class ShaderException : public std::exception
+{
+public:
+    /**
+     * @brief   Constructor
+     * @details Construct a ShaderException object with information on the
+     *          error that occured.
+     * @param   aErrorMsg [in] Descriptive error string explaining what went
+     *          wrong
+     */
+    ShaderException
+        (
+        std::string aErrorMsg
+        ) noexcept;
+
+    /**
+     * @brief   Description of the exception
+     */
+    const char* what() const noexcept override;
+
+private:
+    // A descriptive error message
+    std::string mErrorMsg;
 };
 
 }   // namespace Glance

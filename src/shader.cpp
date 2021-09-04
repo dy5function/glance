@@ -58,8 +58,11 @@ Shader::Shader
     }
     catch( const std::ifstream::failure& e )
     {
-        std::cerr << "ERROR: Exception while reading shader source: "
-                  << e.what() << std::endl;
+        // When we cannot read the shader program, there is nothing we can
+        // do but throw an exception.
+        std::string errorMsg = "Exception while reading shader source: ";
+        errorMsg += e.what();
+        throw ShaderException( errorMsg );
     }
 
     const char* vertexSourcePtr = vertexSource.c_str();
@@ -256,6 +259,18 @@ void Shader::SetFloatUniform
                                static_cast< GLfloat >( aValue2 ),
                                static_cast< GLfloat >( aValue3 ) );
     }
+}
+
+ShaderException::ShaderException
+    (
+    std::string aErrorMsg
+    ) noexcept
+    : mErrorMsg( aErrorMsg )
+{}
+
+const char* ShaderException::what() const noexcept
+{
+    return mErrorMsg.c_str();
 }
 
 }   // namespace Glance
