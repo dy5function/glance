@@ -43,4 +43,4 @@ namespace Glance
 
 }   // namespace Glance
 
-#endif  // GLITTER
+#endif  // GLANCE
