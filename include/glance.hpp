@@ -39,8 +39,8 @@
 namespace Glance
 {
 
-// empty for now
+    // empty for now
 
-}   // namespace Glance
+} // namespace Glance
 
-#endif  // GLANCE
+#endif // GLANCE
