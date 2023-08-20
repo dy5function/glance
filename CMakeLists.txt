@@ -53,6 +53,8 @@ option(GLFW_BUILD_EXAMPLES OFF)
 option(GLFW_BUILD_TEST OFF)
 add_subdirectory(submodules/glfw)
 add_subdirectory(submodules/googletest)
+
+include(CTest)
 add_subdirectory(test)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -std=c++11")

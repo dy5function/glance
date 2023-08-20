@@ -17,8 +17,6 @@
 # along with Glance.  If not, see <https://www.gnu.org/licenses/>.
 ###############################################################################
 
-enable_testing()
-
 add_executable(
     shader_test
     shader_test.cpp
@@ -32,6 +30,11 @@ target_include_directories(
     shader_test PUBLIC
     ${CMAKE_SOURCE_DIR}/submodules/googletest/googletest/include
     ${CMAKE_SOURCE_DIR}/include
+)
+
+add_test(
+    NAME shader_test
+    COMMAND shader_test
 )
 
 include(GoogleTest)
