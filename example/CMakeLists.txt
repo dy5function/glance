@@ -38,7 +38,7 @@ target_include_directories(
 
 add_custom_command(TARGET texture_example POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/shader $<TARGET_FILE_DIR:texture_example>
-                   DEPENDS ${PROJECT_SHADERS})
+)
 add_custom_command(TARGET texture_example POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/texture $<TARGET_FILE_DIR:texture_example>
-                   DEPENDS ${PROJECT_TEXTURES})
+)
